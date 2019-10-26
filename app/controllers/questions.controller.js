@@ -1,6 +1,7 @@
 // const BodyHelper = require('../helpers/body.helper');
 const QuestionsValidator = require('../helpers/questions.validator');
-const QuestionsDao = require('../models/questions.dao');
+// const QuestionsDao = require('../models/questions.dao');
+const QuestionModel = require('../models/questions.model');
 
 class QuestionsController {
 
@@ -17,10 +18,11 @@ class QuestionsController {
 
     async _getRandomQuestion(req, res, next) {
         try {
-            const counter = await QuestionsDao.getQuestionsCount();
-            const questionNumber = this._getRandomQuestionNumber(counter);
+            // const counter = await QuestionsDao.getQuestionsCount();
+            // const questionNumber = this._getRandomQuestionNumber(counter);
 
-            const question = await QuestionsDao.getQuestionByNumber(questionNumber);
+            // const question = await QuestionsDao.getQuestionByNumber(questionNumber);
+            const question = await QuestionModel.findRandomQuestion();
 
             return res
                 .status(200)
@@ -40,13 +42,14 @@ class QuestionsController {
         try {
             const body = await QuestionsValidator.validateCreateQuestion(req.body);
 
-            await QuestionsDao.createQuestion(body.question, body.answer);
-            await QuestionsDao.incrementQuestionsCount();
+            await QuestionModel.create(body);
+
+            // await QuestionsDao.createQuestion(body.question, body.answer);
+            // await QuestionsDao.incrementQuestionsCount();
 
             return res.status(201).send();
 
         } catch(err) {
-            console.log('catch');
             next(err);
         }
         // const body = await BodyHelper.getBody(req);
@@ -59,10 +62,6 @@ class QuestionsController {
 
         // res.statusCode = 201;
         // res.end();
-    }
-
-    _getRandomQuestionNumber(counter) {
-        return Math.ceil( Math.random() * counter );
     }
 
 }

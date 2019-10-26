@@ -1,17 +1,24 @@
 const QuestionsRouter = require('./routers/questions.router');
 // const http = require('http');
+const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const config = require('./config');
 
-const server = express();
+async function main() {
+    const server = express();
 
-server.use(bodyParser());
-server.use('/questions', QuestionsRouter);
+    server.use(bodyParser());
+    server.use('/questions', QuestionsRouter);
 
-server.listen(config.port, () => {
-    console.log('Server listening on port', config.port);
-});
+    await mongoose.connect('mongodb+srv://levkiv:1234567890@testcluster-oqqlz.mongodb.net/test?retryWrites=true&w=majority');
+
+    server.listen(config.port, () => {
+        console.log('Server listening on port', config.port);
+    });
+}
+
+main();
 
 // const paths = Object.entries(QuestionsRouter)
 //     .map(([ routeStr, handler ]) => {
